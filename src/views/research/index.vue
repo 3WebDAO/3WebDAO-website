@@ -7,33 +7,34 @@ import { ref, reactive, onMounted } from "vue";
 const client = new Web3Storage({ token: setting.token });
 const state = reactive({
   list: [],
+  loading: false,
   size: 10,
-  sizeList: [
-    { value: "10", label: "10" },
-    { value: "100", label: "100" },
-    { value: "1000", label: "1000" },
-    { value: "10000", label: "10000" },
-  ],
+  sizeList: [10, 100, 1000, 10000],
 });
 onMounted(() => {
   getList();
 });
-const fullscreenLoading = ref(false);
-const openFullScreen = () => {
-  const loading = ElLoading.service({
-    lock: true,
-    text: "Loading",
-    background: "rgba(0, 0, 0, 0.7)",
-  });
-};
-async function getList() {
+function handleUpload() {
+  const element = document.querySelector(".file");
+  element.click();
+}
+async function uploadImg(file) {
   const loadingInstance = ElLoading.service({ fullscreen: true });
+  const files = file.currentTarget.files;
+  await client.put(files, {
+    maxRetries: 3,
+  });
+  loadingInstance.close();
+  await getList();
+}
+async function getList() {
+  state.loading = true;
   const uploadNames = [];
-  for await (const item of client.list({ maxResults: 10 })) {
+  for await (const item of client.list({ maxResults: state.size })) {
     uploadNames.push(item);
   }
   state.list = uploadNames;
-  loadingInstance.close();
+  state.loading = false;
 }
 
 // for (const file of files) {
@@ -56,11 +57,44 @@ async function getList() {
         </div>
       </section>
       <section>
+        <input
+          style="display: none"
+          type="file"
+          @change="uploadImg"
+          class="file"
+        />
+        <div class="flex_box btn_list">
+          <el-button type="primary" @click="handleUpload()">Upload</el-button>
+          <el-select v-model="state.size" class="m-2" placeholder="Select Size">
+            <el-option
+              v-for="item in state.sizeList"
+              :key="item"
+              :label="item"
+              @click="getList()"
+              :value="item"
+            />
+          </el-select>
+        </div>
         <div>
-          <el-table :data="state.list" stripe style="width: 100%; height: 80vh">
+          <el-table
+            :data="state.list"
+            stripe
+            style="width: 100%; height: 80vh"
+            v-loading="state.loading"
+          >
             <el-table-column prop="name" label="Name" />
             <el-table-column prop="created" label="created" />
             <el-table-column prop="dagSize" label="dagSize" />
+            <el-table-column label="Action">
+              <template #default="scope">
+                <a
+                  :href="'https://dweb.link/ipfs/' + scope.row.cid"
+                  target="_blank"
+                  size="small"
+                  >Download</a
+                >
+              </template>
+            </el-table-column>
           </el-table>
         </div>
       </section>
@@ -104,6 +138,43 @@ async function getList() {
   max-width: 1920px;
   margin: 0 auto;
   font-size: 16px;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px 0;
+    .logo_box {
+      align-items: center;
+    }
+    .logo {
+      width: 50px;
+    }
+    .name {
+      font-size: 26px;
+      font-weight: bold;
+      color: #fff;
+      margin-left: 20px;
+    }
+  }
+  .nav_box {
+    font-size: 24px;
+    color: #fff;
+    > div {
+      margin: 0 20px;
+      position: relative;
+    }
+    .active::after {
+      content: "";
+      position: absolute;
+      width: 80%;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      height: 2px;
+      bottom: -8px;
+      background-color: #fff;
+    }
+  }
   .slogan {
     padding: 250px 0;
     font-size: 50px;
@@ -198,6 +269,10 @@ async function getList() {
 }
 .flex_box {
   display: flex;
+}
+.btn_list {
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 ::v-deep .el-table__body-wrapper {
   background-color: #011f43;

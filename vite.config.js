@@ -15,6 +15,7 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
     }),
   ],
+  base: "./",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src/"),

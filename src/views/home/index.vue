@@ -35,7 +35,10 @@
               We found that blockchain is a high threshold industry combining
               technology and finance. 3WebDAO hope to help early users finding
               out blockchain through more professional and objective research
-              reports which be stored on Filecoin/IPFS through Web3.storage.
+              reports which be stored on Filecoin/IPFS through
+              <a class="cor_blue" href="https://web3.storage/" target="_blank"
+                >Web3.storage</a
+              >.
             </div>
           </div>
           <div class="item">
@@ -76,19 +79,27 @@
         </div>
         <div class="right flex_box">
           <div class="flex_box item">
-            <div>Twitter</div>
+            <div>
+              <a href="https://twitter.com/3WebDAO" target="_blank">Twitter</a>
+            </div>
             <img src="@/assets/twitter.png" alt="" />
           </div>
           <div class="flex_box item">
-            <div>Github</div>
+            <div>
+              <a href="https://github.com/3WebDAO" target="_blank">Github</a>
+            </div>
             <img src="@/assets/github.png" alt="" />
           </div>
           <div class="flex_box item">
-            <div>Telegram</div>
+            <div>
+              <a href="https://t.me/web3io" target="_blank">Telegram</a>
+            </div>
             <img src="@/assets/telegram.png" alt="" />
           </div>
           <div class="flex_box item">
-            <div>Email</div>
+            <div>
+              <a href="mailto:3webdao@gmail.com" target="_blank">Email</a>
+            </div>
             <img src="@/assets/email.png" alt="" />
           </div>
         </div>
@@ -243,5 +254,8 @@ export default {};
 }
 .flex_box {
   display: flex;
+}
+.cor_blue {
+  color: rgb(43, 43, 168);
 }
 </style>
